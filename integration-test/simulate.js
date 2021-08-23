@@ -28,7 +28,6 @@ const TOKENS = [
 
 const INITIAL_UST = 500000;
 const ROW_AVG = 5000;
-const MINIMUM_DEV = 0.008;
 
 const MIN_BUYSELL_BLOCKS = 2400;
 const MIN_UST_BUY_AMT = 5000;
@@ -38,6 +37,7 @@ const PROTOCOL_TX_FEE = 1.6;
 const TX_FEE = 0.0037;
 
 async function fetchData(token) {
+  const MINIMUM_DEV = 0.008;
   return JSON.parse(fs.readFileSync(`/tmp/${token}.txt`));
   const data = await db.any(`
     SELECT
@@ -110,21 +110,21 @@ function simulate(token) {
     // return data;
 }
 
-function processSimulation(data) {
-    let ust = 1;
-    let token = 0;
-    for (let {date, price, oracle_price, buy_price, sell_price} of data) {
-        if (buy_price > price && ust) {
-            token = (ust / price) * (1 - TX_FEE);
-            ust = 0;
-        }
-        if (sell_price < price && token) {
-            ust = (token * price) * (1 - TX_FEE);
-            token = 0;
-        }
-    }
-    return [ust, token];
-}
+// function processSimulation(data) {
+//     let ust = 1;
+//     let token = 0;
+//     for (let {date, price, oracle_price, buy_price, sell_price} of data) {
+//         if (buy_price > price && ust) {
+//             token = (ust / price) * (1 - TX_FEE);
+//             ust = 0;
+//         }
+//         if (sell_price < price && token) {
+//             ust = (token * price) * (1 - TX_FEE);
+//             token = 0;
+//         }
+//     }
+//     return [ust, token];
+// }
 
 function runOnData(state, entries) {
     // const BASE_PERC_UST = 1.0;
